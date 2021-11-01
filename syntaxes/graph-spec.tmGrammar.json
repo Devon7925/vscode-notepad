@@ -1,0 +1,82 @@
+{
+    "scopeName": "source.graph-spec",
+    "patterns": [
+        {
+            "include": "#comment"
+        },
+        {
+            "include": "#keyword"
+        },
+        {
+            "include": "#keyword2"
+        },
+        {
+            "include": "#expression"
+        },
+        {
+            "include": "#operator"
+        }
+    ],
+    "repository": {
+        "comment": {
+            "name": "comment",
+            "match": "#.*"
+        },
+        "expression": {
+            "patterns": [
+                {
+                    "include": "#number"
+                },
+                {
+                    "include": "#variable"
+                },
+                {
+                    "include": "#paren-expression"
+                }
+            ]
+        },
+        "keyword": {
+            "match": "slider",
+            "name": "keyword"
+        },
+        "keyword2": {
+            "match": "from|to",
+            "name": "keyword.control"
+        },
+        "variable": {
+            "match": "[a-zA-Z][0-9a-zA-Z]*(_[0-9a-zA-Z]+)?",
+            "name": "keyword.variable"
+        },
+        "number": {
+            "match": "[0-9]+(\\.[0-9]*)?",
+            "name": "constant.numeric"
+        },
+        "operator": {
+            "name": "punctuation.operator.arithmetic",
+            "match": "[+-/*^%]"
+        },
+        "paren-expression": {
+            "begin": "\\(",
+            "end": "\\)",
+            "beginCaptures": {
+                "0": {
+                    "name": "punctuation.paren.open"
+                }
+            },
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.paren.close"
+                }
+            },
+            "name": "expression.group",
+            "patterns": [
+                {
+                    "include": "#expression"
+                },
+                {
+                    "include": "#operator"
+                }
+            ]
+        }
+    }
+}

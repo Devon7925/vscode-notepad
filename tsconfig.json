@@ -1,0 +1,15 @@
+{
+	"exclude": [
+		"node_modules",
+		".vscode-test"
+	],
+	"files": [],
+	"references": [
+		{
+			"path": "./src/grapher"
+		},
+		{
+			"path": "./src/extension"
+		}
+	]
+}
