@@ -24,9 +24,9 @@ export const activate: ActivationFunction = () => {
         for (const line of data.text().split(/\r?\n/)) {
           if (line.startsWith("slider ")) {
             const trimmed = line.replace("slider ", "");
-            const match_data = /(\w+)(?:\sfrom\s([0-9]+(?:\.[0-9]*)?))?(?:\sto\s([0-9]+(?:\.[0-9]*)?))?/.exec(trimmed);
+            const match_data = /(\w+)(?:\sfrom\s([0-9]+(?:\.[0-9]*)?))?(?:\sto\s([0-9]+(?:\.[0-9]*)?))?(?:\sby\s([0-9]+(?:\.[0-9]*)?))?/.exec(trimmed);
             if (match_data) {
-              element.innerHTML += `<img src="https://math.justforfun.click/$/${match_data[1]}" style="filter:invert(1)"><input type="range" min="${match_data[2] ? match_data[2] : 0}" max="${match_data[3] ? match_data[3] : 1}" step="0.01" onchange="window.doUpdate(this,'${match_data[1]}');"/><p class="value_display" variable="${match_data[1]}"></p></br>`;
+              element.innerHTML += `<img src="https://math.justforfun.click/$/${match_data[1]}" style="filter:invert(1)"><input type="range" min="${match_data[2] ? match_data[2] : 0}" max="${match_data[3] ? match_data[3] : 1}" step="${match_data[4] ? match_data[4] : 0.01}" onchange="window.vals['${match_data[1]}']=this.value;window.doUpdate();"/><p class="value_display" variable="${match_data[1]}"></p></br>`;
             }
             continue;
           }
@@ -49,19 +49,21 @@ export const activate: ActivationFunction = () => {
 
         parser.functions = {...parser.functions, ...newMathFunctions};
       }
+      window.doUpdate();
     }
   };
 };
 window.vals = {};
 window.expressions = [];
-window.doUpdate = function (elem: HTMLInputElement, variable: string) {
-  window.vals[variable] = elem.value;
+window.doUpdate = function () {
   for (const expr of window.expressions) {
-    const split = expr.split("=", 2);
-    try {
-      window.vals[split[0]] = parser.evaluate(split[1], window.vals);
-    } catch (error) {
-      window.vals[split[0]] = 0;
+    const match_data = /(\w+)/.exec(expr);
+    if(match_data) {
+      try {
+        window.vals[match_data[1]] = parser.evaluate(`${expr};${match_data[1]}`, window.vals);
+      } catch (error) {
+        window.vals[match_data[1]] = 0;
+      }
     }
   }
   for (const variable in window.vals) {

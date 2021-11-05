@@ -3,7 +3,7 @@
 	"publisher": "devon7925",
 	"displayName": "Notepad Notebook",
 	"description": "An extension for using vscode as a notepad",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"preview": true,
 	"engines": {
 		"vscode": "^1.61.0"
@@ -55,6 +55,10 @@
 				"id": "graph-spec",
 				"extensions": [],
 				"configuration": "syntaxes/language-configuration.json"
+			},
+			{
+				"id": "url",
+				"extensions": []
 			}
 		],
 		"grammars": [

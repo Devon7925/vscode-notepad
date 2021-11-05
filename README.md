@@ -7,7 +7,10 @@ Using this you can display:
 
 * Well formated text using markdown
 * Images using markdown
-* Javascript code and it's output
-* Interactive well displayed math
+* Javascript code and it's output using `javascript` language
+* Interactive well displayed math using `graph-spec` language
+* Display websites inline using `url` language
 
 You can also use `mathFunctions` to define js functions that you can use in the math.
+
+Within math cells you can use `name=value` to define a veriable or use `slider name` to create a slider. You can also use the syntax `slider name from 0 to 10 by 1` to define the range of the slider and the smallest change in value. You can choose to disclude any of the terms, but they must be in the same order.

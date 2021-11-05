@@ -66,7 +66,7 @@ class Controller {
 	readonly controllerId = 'notepad-controller';
 	readonly notebookType = 'notepad';
 	readonly label = 'Notepad';
-	readonly supportedLanguages = ['graph-spec', 'javascript'];
+	readonly supportedLanguages = ['graph-spec', 'javascript', 'url'];
 
 	private readonly _controller: vscode.NotebookController;
 	private _executionOrder = 0;
@@ -116,7 +116,20 @@ class Controller {
 					vscode.NotebookCellOutputItem.text(cell.document.getText(), 'x-application/grapher')
 				])
 			]);
+		}else if (cell.document.languageId === 'url') {
+			execution.replaceOutput([
+				new vscode.NotebookCellOutput([
+					vscode.NotebookCellOutputItem.text(`<iframe
+						title="Embedded website"
+						width="100%"
+						height="300"
+						src="${cell.document.getText()}">
+					</iframe>`, 'text/html')
+				])
+			]);
 		}
+
+		
 		execution.end(true, Date.now());
 	}
 }

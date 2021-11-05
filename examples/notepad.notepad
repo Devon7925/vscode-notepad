@@ -1,5 +1,9 @@
 # A Test Notepad
 
+```url
+https://en.wikipedia.org/wiki/Matrix_(mathematics)#Definition
+```
+
 ```js
 function test(x) {
     if(x <= 0) return 1;
@@ -11,16 +15,17 @@ mathFunctions.test = test;
 ```
 
 ```graph-spec
-slider t from 0 to 20
-t2=floor(t)
-x=test(t2)
+slider t from 0 to 20 by 1
+x=test(t)
 ```
 
 ```graph-spec
-slider t_0 from 0 to 20
-m=10
-x=m*t_0^2
-f(t)=t^2
+slider g
+m=[g,2*g]
+g3=true
+ex(x)=5*x
+r=ex(g)
+g4=not(g3)
 ```
 
 ![example](test.png)
