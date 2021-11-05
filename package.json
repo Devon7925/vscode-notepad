@@ -3,7 +3,7 @@
 	"publisher": "devon7925",
 	"displayName": "Notepad Notebook",
 	"description": "An extension for using vscode as a notepad",
-	"version": "0.0.25",
+	"version": "0.1.0",
 	"preview": true,
 	"engines": {
 		"vscode": "^1.61.0"
@@ -45,7 +45,8 @@
 				"entrypoint": "./out/renderer.js",
 				"requiresMessaging": "optional",
 				"mimeTypes": [
-					"x-application/grapher"
+					"x-application/grapher",
+					"x-application/grapher/js"
 				]
 			}
 		],

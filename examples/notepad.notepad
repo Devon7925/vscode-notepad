@@ -1,0 +1,26 @@
+# A Test Notepad
+
+```js
+function test(x) {
+    if(x <= 0) return 1;
+    return x*test(x-1);
+}
+console.log(test(6))
+mathFunctions.test = test;
+
+```
+
+```graph-spec
+slider t from 0 to 20
+t2=floor(t)
+x=test(t2)
+```
+
+```graph-spec
+slider t_0 from 0 to 20
+m=10
+x=m*t_0^2
+f(t)=t^2
+```
+
+![example](test.png)

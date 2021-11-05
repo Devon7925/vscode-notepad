@@ -1,9 +1,6 @@
 # Change Log
 
-All notable changes to the "notebook-markdown" extension will be documented in this file.
+## [1.1.0]
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+- Added javascript support
+- You can define graph functions via js by assigning properties of mathFunctions.
