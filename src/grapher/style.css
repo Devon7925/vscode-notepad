@@ -1,7 +1,36 @@
-.value_display {
-    font-size: 20px;
-    display:inline-block;
-    margin-left: 10px;
+@font-face { 
+    font-family: 'MathJax';
+    font-style: normal;
+    font-weight: normal;
+    src: url('fonts/MathJax_Main-Regular.woff') format('woff');
+}
+
+.slider {
+    vertical-align: middle;
+    margin-left: 7px;
+}
+
+.line-box {
     margin-top: 5px;
-    margin-bottom: 5px;
+}
+
+.value_display {
+    font-family: 'MathJax';
+    font-size: 18px;
+    display: inline-block;
+    margin: 0;
+    margin-left: 15px;
+    vertical-align: middle;
+}
+
+img.math-display {
+    vertical-align: middle;
+}
+
+body.vscode-dark img.math-display{
+    filter:invert(1);
+}
+
+body.vscode-high-contrast img.math-display {
+    filter:invert(1);
 }

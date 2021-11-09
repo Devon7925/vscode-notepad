@@ -15,8 +15,14 @@ mathFunctions.test = test;
 ```
 
 ```graph-spec
-slider t from 0 to 20 by 1
+slider t from 0 to 20 by 1 default 5
 x=test(t)
+display cc {L}{f}(s)
+display "let" A=[[a,b],[c,d]]
+z_1=9.81
+z=z_1^2
+z_x=9.81*2
+value t^2
 ```
 
 ```graph-spec

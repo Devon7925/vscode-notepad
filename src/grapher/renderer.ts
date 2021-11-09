@@ -1,22 +1,27 @@
 import type { ActivationFunction } from 'vscode-notebook-renderer';
-import rendererCss from './style.css';
+require('./style.css');
 
 declare global {
   interface Window {
     vals: any;
     doUpdate: any;
-    expressions: string[];
+    expressions: {
+      text:string,
+      type:string
+    }[];
   }
 }
 
 const Parser = require('expr-eval').Parser;
 const parser = new Parser();
 
+function escapeHTML(str: string) {
+  var p = document.createElement("p");
+  p.innerText = str;
+  return p.innerHTML.replace(/"/g, "\\\"");
+}
+
 export const activate: ActivationFunction = () => {
-  const style = document.createElement('style');
-  style.type = 'text/css';
-  style.textContent = rendererCss;
-  document.head.appendChild(style);
   return {
     renderOutputItem(data, element) {
       if (data.mime === 'x-application/grapher') {
@@ -24,16 +29,37 @@ export const activate: ActivationFunction = () => {
         for (const line of data.text().split(/\r?\n/)) {
           if (line.startsWith("slider ")) {
             const trimmed = line.replace("slider ", "");
-            const match_data = /(\w+)(?:\sfrom\s([0-9]+(?:\.[0-9]*)?))?(?:\sto\s([0-9]+(?:\.[0-9]*)?))?(?:\sby\s([0-9]+(?:\.[0-9]*)?))?/.exec(trimmed);
+            const match_data = /(\w+)(?:\sfrom\s([0-9]+(?:\.[0-9]*)?))?(?:\sto\s([0-9]+(?:\.[0-9]*)?))?(?:\sby\s([0-9]+(?:\.[0-9]*)?))?(?:\sdefault\s([0-9]+(?:\.[0-9]*)?))?/.exec(trimmed);
             if (match_data) {
-              element.innerHTML += `<img src="https://math.justforfun.click/$/${match_data[1]}" style="filter:invert(1)"><input type="range" min="${match_data[2] ? match_data[2] : 0}" max="${match_data[3] ? match_data[3] : 1}" step="${match_data[4] ? match_data[4] : 0.01}" onchange="window.vals['${match_data[1]}']=this.value;window.doUpdate();"/><p class="value_display" variable="${match_data[1]}"></p></br>`;
+              let min = match_data[2] ? parseFloat(match_data[2]) : 0;
+              let max = match_data[3] ? parseFloat(match_data[3]) : 1;
+              let value = match_data[5] ? match_data[5] : (min+max)/2;
+              window.vals[match_data[1]] = value;
+              element.innerHTML += `<div class="line-box"><img class="math-display" src="https://math.justforfun.click/$/${encodeURI(match_data[1])}"><input class="slider" type="range" min="${min}" max="${max}" value="${value}" step="${match_data[4] ? match_data[4] : 0.01}" oninput="window.vals['${match_data[1]}']=this.value;window.doUpdate();"/><p class="value_display" variable="${match_data[1]}"></p></div>`;
             }
             continue;
+          }else if (line.startsWith("display ")) {
+            const trimmed = encodeURI(line.replace("display ", ""));
+            element.innerHTML += `<div class="line-box"><img class="math-display" src="https://math.justforfun.click/$/${trimmed}"></div>`;
+            continue;
+          }else if (line.startsWith("value ")) {
+            const trimmed = line.replace("value ", "");
+            window.expressions.push({text:trimmed,type:"value"});
+            element.innerHTML += `<div class="line-box"><img class="math-display" src="https://math.justforfun.click/$/${encodeURI(trimmed)}"><p class="value_display" expression="${trimmed}"></p></div>`;
+            continue;
           }
-          window.expressions.push(line);
-          element.innerHTML += `<img src="https://math.justforfun.click/$/${line}" style="filter:invert(1)"><p class="value_display" variable="${line.split("=")[0]}"></p></br>`;
+          const match_data = /(\w+)/.exec(line);
+          if (match_data) {
+            window.expressions.push({text:line,type:"assignment"});
+            let newHTML = "";
+            newHTML += `<div class="line-box"><img class="math-display" src="https://math.justforfun.click/$/${encodeURI(line)}">`;
+            if(!/^\w+=\d+(\.\d*)?$/.test(line)) {
+              newHTML += `<p class="value_display" variable="${match_data[1]}"></p>`;
+            }
+            newHTML += `</div>`;
+            element.innerHTML += newHTML;
+          }
         }
-        // element.innerHTML += `<img src="https://math.azureedge.net/$/sum_{i=1}^100 x_i + y_i"/>`;
       }else if (data.mime === 'x-application/grapher/js') {
         'use strict';
         
@@ -56,19 +82,40 @@ export const activate: ActivationFunction = () => {
 window.vals = {};
 window.expressions = [];
 window.doUpdate = function () {
+  let expressioncache:{[k:string]:string} = {};
+
   for (const expr of window.expressions) {
-    const match_data = /(\w+)/.exec(expr);
-    if(match_data) {
-      try {
-        window.vals[match_data[1]] = parser.evaluate(`${expr};${match_data[1]}`, window.vals);
-      } catch (error) {
-        window.vals[match_data[1]] = 0;
+    if (expr.type === "assignment") {
+      const match_data = /(\w+)/.exec(expr.text);
+      if(match_data) {
+        try {
+          window.vals[match_data[1]] = parser.evaluate(`${expr.text};${match_data[1]}`, window.vals);
+        } catch (error) {
+          window.vals[match_data[1]] = "null";
+        }
       }
+    } else if (expr.type === "value") {
+      let result:any;
+      try {
+        result = parser.evaluate(`${expr.text}`, window.vals);
+      } catch (error) {
+        result = "null";
+      }
+      expressioncache[expr.text] = result;
     }
   }
   for (const variable in window.vals) {
-    if (document.querySelectorAll("p[variable='" + variable + "']").length > 0) {
-      document.querySelectorAll("p[variable='" + variable + "']")[0].innerHTML = window.vals[variable];
-    }
+    document.querySelectorAll("p[variable='" + variable + "']").forEach((elem) => {
+      if(typeof window.vals[variable] === 'function') {
+        elem.innerHTML = "function";
+      }else{
+        elem.innerHTML = window.vals[variable];
+      }
+    });
   };
+  for (const expr in expressioncache) {
+    document.querySelectorAll(`p[expression='${expr}']`).forEach((elem) => {
+      elem.innerHTML = expressioncache[expr];
+    });
+  }
 };

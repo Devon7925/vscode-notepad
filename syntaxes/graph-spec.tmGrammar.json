@@ -36,11 +36,11 @@
             ]
         },
         "keyword": {
-            "match": "slider",
+            "match": "slider|display|value",
             "name": "keyword"
         },
         "keyword2": {
-            "match": "from|to",
+            "match": "from|to|by|default",
             "name": "keyword.control"
         },
         "variable": {
