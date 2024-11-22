@@ -15,7 +15,7 @@ You can also use `mathFunctions` to define js functions that you can use in the 
 
 Within math cells you can use:
 
-* `name=value` to define a veriable
+* `name=value` to define a variable
 * `slider name` to create a slider. You can also use the syntax `slider name from 0 to 10 by 1` to define the range of the slider and the smallest change in value. You can choose to disclude any of the terms, but they must be in the same order.
 * `display math` to just display math without any effects. Note asciimath is used for rendering.
 * `value math` to just display math and it's result when evaluated without any effects.
